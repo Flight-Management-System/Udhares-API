@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('locations', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('shortcode');
+            $table->string('shortcode')->unique();
             $table->decimal('lat', 10, 8);
             $table->decimal('long', 11, 8);
             $table->integer('platform_count');
