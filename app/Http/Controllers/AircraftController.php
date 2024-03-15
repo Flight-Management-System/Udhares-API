@@ -3,83 +3,91 @@
 namespace App\Http\Controllers;
 
 use App\Models\Aircraft;
+use App\Models\Location;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AircraftController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        return Aircraft::all();
+    }
+    public function create(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'reg_no' => 'unique:aircrafts|required|string',
+            'seat_count' => 'required|integer',
+            'dow' => 'required|integer',
+            'mtow' => 'required|integer',
+            'ktas' => 'required|integer',
+            'fuel_capacity' => 'required|integer',
+            'is_active' => 'required|boolean',
+            'last_compwash' => 'nullable|date',
+            'cg_index' => 'required|numeric',
+            'current_location' => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()], 400);
+        }
+
+        if (!(Location::find($request->current_location))) {
+            return response()->json(['message' => 'Location not found: ' . $request->current_location], 404);
+        }
+
+        $request['last_compwash'] = $request->last_compwash ? date('Y-m-d H:i:s', strtotime($request->last_compwash)) : null;
+
+        return Aircraft::create($request->all());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function show($id)
     {
-        //
+        $aircraft = Aircraft::find($id);
+
+        if ($aircraft) {
+            return $aircraft;
+        } else {
+            return response()->json(['message' => 'Aircraft not found'], 404);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function update($id, Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'reg_no' => 'required|string',
+            'seat_count' => 'required|integer',
+            'dow' => 'required|integer',
+            'mtow' => 'required|integer',
+            'ktas' => 'required|integer',
+            'fuel_capacity' => 'required|integer',
+            'is_active' => 'required|boolean',
+            'last_compwash' => 'nullable|date',
+            'cg_index' => 'required|numeric',
+            'current_location' => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()], 400);
+        }
+
+        if (!(Location::find($request->current_location))) {
+            return response()->json(['message' => 'Location not found: ' . $request->current_location], 404);
+        }
+
+        $request['last_compwash'] = $request->last_compwash ? date('Y-m-d H:i:s', strtotime($request->last_compwash)) : null;
+
+        $aircraft = Aircraft::find($id);
+        $aircaftReg = Aircraft::where('reg_no', $request->reg_no)->first();
+        if ($aircaftReg && ($aircaftReg->id != $id)) {
+            return response()->json(['message' => 'An aircraft with this reg number already exists: ' . $request->reg_no], 400);
+        }
+        $aircraft->update($request->all());
+        return $aircraft;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Aircraft  $aircraft
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Aircraft $aircraft)
+    public function destroy($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Aircraft  $aircraft
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Aircraft $aircraft)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Aircraft  $aircraft
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Aircraft $aircraft)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Aircraft  $aircraft
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Aircraft $aircraft)
-    {
-        //
+        return Aircraft::destroy($id);
     }
 }
