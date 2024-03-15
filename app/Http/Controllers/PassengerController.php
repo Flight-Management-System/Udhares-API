@@ -4,82 +4,64 @@ namespace App\Http\Controllers;
 
 use App\Models\Passenger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PassengerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        return Passenger::all();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'passport_no' => 'required|string|unique:passengers',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()], 400);
+        }
+
+        return Passenger::create($request->all());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function show($id)
     {
-        //
+        $passenger = Passenger::find($id);
+
+        if ($passenger) {
+            return $passenger;
+        } else {
+            return response()->json(['message' => 'Passenger not found'], 404);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Passenger  $passenger
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Passenger $passenger)
+    public function update($id, Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'passport_no' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()], 400);
+        }
+
+        $passenger = Passenger::find($id);
+        $passengerPassport = Passenger::where('passport_no', $request->passport_no)->first();
+        if ($passengerPassport && $passengerPassport->id != $id) {
+            return response()->json(['message' => 'Passport number already exists'], 400);
+        }
+        $passenger->update($request->all());
+        return $passenger;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Passenger  $passenger
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Passenger $passenger)
+    public function destroy($id)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Passenger  $passenger
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Passenger $passenger)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Passenger  $passenger
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Passenger $passenger)
-    {
-        //
+        return Passenger::destroy($id);
     }
 }

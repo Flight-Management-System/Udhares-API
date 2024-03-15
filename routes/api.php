@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AircraftController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\PassengerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,4 +35,12 @@ Route::prefix('/aircrafts')->group(function () {
     Route::get('/{id}', [AircraftController::class, 'show']);
     Route::put('/{id}', [AircraftController::class, 'update']);
     Route::delete('/{id}', [AircraftController::class, 'destroy']);
+});
+
+Route::prefix('/passengers')->group(function() {
+    Route::get('/', [PassengerController::class, 'index']);
+    Route::post('/', [PassengerController::class, 'create']);
+    Route::get('/{id}', [PassengerController::class, 'show']);
+    Route::put('/{id}', [PassengerController::class, 'update']);
+    Route::delete('/{id}', [PassengerController::class, 'destroy']);
 });
