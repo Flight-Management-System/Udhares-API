@@ -14,7 +14,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('aircraft', function (Blueprint $table) {
+        Schema::create('aircrafts', function (Blueprint $table) {
             $table->id();
             $table->string('reg_no');
             $table->integer('seat_count');
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->integer('ktas');
             $table->integer('fuel_capacity');
             $table->boolean('is_active');
-            $table->dateTime('last_compwash');
+            $table->dateTime('last_compwash')->nullable();
             $table->integer('cg_index');
             $table->foreignIdFor(Location::class, 'current_location');
             $table->timestamps();
@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('aircraft');
+        Schema::dropIfExists('aircrafts');
     }
 };
