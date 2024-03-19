@@ -25,6 +25,10 @@ class GroupController extends Controller
             return response()->json(['message' => $validator->errors()], 400);
         }
 
+        if ($request->from_location == $request->to_location) {
+            return response()->json(['message' => 'From and to locations cannot be the same'], 400);
+        }
+
         return Group::create($request->all());
     }
 
@@ -49,6 +53,10 @@ class GroupController extends Controller
 
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors()], 400);
+        }
+
+        if ($request->from_location == $request->to_location) {
+            return response()->json(['message' => 'From and to locations cannot be the same'], 400);
         }
 
         $group = Group::find($id);
