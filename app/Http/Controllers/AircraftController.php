@@ -25,7 +25,7 @@ class AircraftController extends Controller
             'is_active' => 'required|boolean',
             'last_compwash' => 'nullable|date',
             'cg_index' => 'required|numeric',
-            'current_location' => 'required|integer|exists:locations.id'
+            'current_location' => 'required|integer|exists:locations,id'
         ]);
 
         if ($validator->fails()) {
