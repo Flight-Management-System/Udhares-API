@@ -25,15 +25,11 @@ class AircraftController extends Controller
             'is_active' => 'required|boolean',
             'last_compwash' => 'nullable|date',
             'cg_index' => 'required|numeric',
-            'current_location' => 'required|integer'
+            'current_location' => 'required|integer|exists:locations.id'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors()], 400);
-        }
-
-        if (!(Location::find($request->current_location))) {
-            return response()->json(['message' => 'Location not found: ' . $request->current_location], 404);
         }
 
         $request['last_compwash'] = $request->last_compwash ? date('Y-m-d H:i:s', strtotime($request->last_compwash)) : null;
@@ -64,15 +60,11 @@ class AircraftController extends Controller
             'is_active' => 'required|boolean',
             'last_compwash' => 'nullable|date',
             'cg_index' => 'required|numeric',
-            'current_location' => 'required|integer'
+            'current_location' => 'required|integer|exists:locations,id'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors()], 400);
-        }
-
-        if (!(Location::find($request->current_location))) {
-            return response()->json(['message' => 'Location not found: ' . $request->current_location], 404);
         }
 
         $request['last_compwash'] = $request->last_compwash ? date('Y-m-d H:i:s', strtotime($request->last_compwash)) : null;
