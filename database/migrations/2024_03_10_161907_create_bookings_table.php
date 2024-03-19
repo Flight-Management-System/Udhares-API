@@ -22,18 +22,18 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Passenger::class, 'passenger');
             $table->string('pnr')->unique();
-            $table->foreignIdFor(Flight::class, 'flight');
-            $table->foreignIdFor(FlightTrip::class, 'flight_trip');
-            $table->foreignIdFor(Group::class, 'group');
+            $table->foreignIdFor(Flight::class, 'flight')->nullable();
+            $table->foreignIdFor(FlightTrip::class, 'flight_trip')->nullable();
+            $table->foreignIdFor(Group::class, 'group')->nullable();
             $table->foreignIdFor(Location::class, 'dept_location');
             $table->foreignIdFor(Location::class, 'arr_location');
             $table->integer('allowed_weight');
             $table->boolean('is_active');
-            $table->boolean('is_going_abroad');
-            $table->boolean('is_coming_from_abroad');
-            $table->string('international_flight_no');
-            $table->dateTime('scheduled_dept_datetime');
-            $table->dateTime('scheduled_arr_datetime');
+            $table->boolean('is_going_abroad')->nullable();
+            $table->boolean('is_coming_from_abroad')->nullable();
+            $table->string('international_flight_no')->nullable();
+            $table->dateTime('scheduled_dept_datetime')->nullable();
+            $table->dateTime('scheduled_arr_datetime')->nullable();
             $table->timestamps();
         });
     }
