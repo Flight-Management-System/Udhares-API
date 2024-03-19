@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AircraftController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PassengerController;
@@ -52,4 +53,12 @@ Route::prefix('/groups')->group(function() {
     Route::get('/{id}', [GroupController::class, 'show']);
     Route::put('/{id}', [GroupController::class, 'update']);
     Route::delete('/{id}', [GroupController::class, 'destroy']);
+});
+
+Route::prefix('/bookings')->group(function() {
+    Route::get('/', [BookingController::class, 'index']);
+    Route::post('/', [BookingController::class, 'create']);
+    Route::get('/{id}', [BookingController::class, 'show']);
+    Route::put('/{id}', [BookingController::class, 'update']);
+    Route::delete('/{id}', [BookingController::class, 'destroy']);
 });
