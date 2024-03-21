@@ -4,82 +4,94 @@ namespace App\Http\Controllers;
 
 use App\Models\Flight;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class FlightController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        return Flight::all();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'flight_trip' => 'required|integer|exists:flight_trips,id',
+            'flight_no' => 'required|string|unique:flights',
+            'dept_time' => 'required|date',
+            'arr_time' => 'required|date',
+            'dept_location' => 'required|integer|exists:locations,id',
+            'arr_location' => 'required|integer|exists:locations,id',
+            'required_fuel' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()], 400);
+        }
+
+        if ($request->dept_location == $request->arr_location) {
+            return response()->json(['message' => 'Departure and arrival locations cannot be the same'], 400);
+        }
+
+        $request['dept_time'] = date('Y-m-d H:i:s', strtotime($request->dept_time));
+        $request['arr_time'] = date('Y-m-d H:i:s', strtotime($request->arr_time));
+
+        if ($request->dept_time >= $request->arr_time) {
+            return response()->json(['message' => 'Departure time cannot be greater than or equal to arrival time'], 400);
+        }
+
+        return Flight::create($request->all());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function show($id)
     {
-        //
+        $flight = Flight::find($id);
+
+        if ($flight) {
+            return $flight;
+        } else {
+            return response()->json(['message' => 'Flight not found'], 404);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Flight  $flight
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Flight $flight)
+    public function update($id, Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'flight_trip' => 'required|integer|exists:flight_trips,id',
+            'flight_no' => 'required|string',
+            'dept_time' => 'required|date',
+            'arr_time' => 'required|date',
+            'dept_location' => 'required|integer|exists:locations,id',
+            'arr_location' => 'required|integer|exists:locations,id',
+            'required_fuel' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()], 400);
+        }
+
+        if ($request->dept_location == $request->arr_location) {
+            return response()->json(['message' => 'Departure and arrival locations cannot be the same'], 400);
+        }
+
+        $request['dept_time'] = date('Y-m-d H:i:s', strtotime($request->dept_time));
+        $request['arr_time'] = date('Y-m-d H:i:s', strtotime($request->arr_time));
+
+        if ($request->dept_time >= $request->arr_time) {
+            return response()->json(['message' => 'Departure time cannot be greater than or equal to arrival time'], 400);
+        }
+
+        $flight = Flight::find($id);
+        $flightNo = Flight::where('flight_no', $request->flight_no)->first();
+        if ($flightNo && $flightNo->id != $id) {
+            return response()->json(['message' => 'Flight number already exists'], 400);
+        }
+        $flight->update($request->all());
+        return $flight;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Flight  $flight
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Flight $flight)
+    public function destroy($id)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Flight  $flight
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Flight $flight)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Flight  $flight
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Flight $flight)
-    {
-        //
+        return Flight::destroy($id);
     }
 }

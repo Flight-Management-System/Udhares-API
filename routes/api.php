@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AircraftController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\FlightController;
 use App\Http\Controllers\FlightTripController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\LocationController;
@@ -70,4 +71,12 @@ Route::prefix('/flight-trips')->group(function() {
     Route::get('/{id}', [FlightTripController::class, 'show']);
     Route::put('/{id}', [FlightTripController::class, 'update']);
     Route::delete('/{id}', [FlightTripController::class, 'destroy']);
+});
+
+Route::prefix('/flights')->group(function() {
+    Route::get('/', [FlightController::class, 'index']);
+    Route::post('/', [FlightController::class, 'create']);
+    Route::get('/{id}', [FlightController::class, 'show']);
+    Route::put('/{id}', [FlightController::class, 'update']);
+    Route::delete('/{id}', [FlightController::class, 'destroy']);
 });
