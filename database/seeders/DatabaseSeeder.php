@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Aircraft;
+use App\Models\Booking;
 use App\Models\Group;
 use App\Models\Location;
 use App\Models\Passenger;
@@ -25,8 +26,9 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $locations = Location::factory(10)->create();
-        $aircrafts = Aircraft::factory(10)->recycle($locations)->create();
         $passengers = Passenger::factory(100)->create();
         $groups = Group::factory(5)->recycle($locations)->create();
+        Aircraft::factory(10)->recycle($locations)->create();
+        Booking::factory(100)->recycle($groups, $passengers, $locations)->create();
     }
 }
