@@ -17,9 +17,14 @@ class GroupFactory extends Factory
      */
     public function definition()
     {
+        $locations = Location::all();
+        $fromLocation = $locations->random();
+        $locations = $locations->where('id', '!=', $fromLocation->id);
+        $toLocation = $locations->random();
+
         return [
-            'from_location' => Location::factory(),
-            'to_location' => Location::factory(),
+            'from_location' => $fromLocation,
+            'to_location' => $toLocation,
             'is_active' => fake()->boolean,
         ];
     }

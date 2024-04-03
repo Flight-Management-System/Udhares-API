@@ -19,23 +19,34 @@ class BookingFactory extends Factory
      */
     public function definition()
     {
-        $isGoingAbrod = fake()->boolean(5);
+        $isGoingAbroad = fake()->boolean(5);
         $isComingFromAbroad = fake()->boolean(5);
+        $group = fake()->boolean(20) ? Group::all()->random() : null;
+
+        if ($group) {
+            $fromLocation = $group->from_location;
+            $toLocation = $group->to_location;
+        } else {
+            $locations = Location::all();
+            $fromLocation = $locations->random();
+            $locations = $locations->where('id', '!=', $fromLocation->id);
+            $toLocation = $locations->random();
+        }
 
         return [
             'passenger' => Passenger::factory(),
             'pnr' => fake()->unique()->regexify('[A-Z]{3}[0-9]{6}'),
             'flight' => null,
             'flight_trip' => null,
-            'group' => fake()->boolean(20) ? Group::factory() : null,
-            'dept_location' => Location::factory(),
-            'arr_location' => Location::factory(),
+            'group' => $group,
+            'dept_location' => $fromLocation,
+            'arr_location' => $toLocation,
             'allowed_weight' => fake()->numberBetween(10, 20),
             'is_active' => fake()->boolean,
-            'is_going_abroad' => $isGoingAbrod,
+            'is_going_abroad' => $isGoingAbroad,
             'is_coming_from_abroad' => $isComingFromAbroad,
-            'international_flight_no' => $isGoingAbrod || $isComingFromAbroad ? fake()->regexify('[A-Z]{2}[0-9]{4}') : null,
-            'scheduled_dept_datetime' => $isGoingAbrod ? fake()->dateTimeBetween(now(), now()->addDays(1)) : null,
+            'international_flight_no' => $isGoingAbroad || $isComingFromAbroad ? fake()->regexify('[A-Z]{2}[0-9]{4}') : null,
+            'scheduled_dept_datetime' => $isGoingAbroad ? fake()->dateTimeBetween(now(), now()->addDays(1)) : null,
             'scheduled_arr_datetime' => $isComingFromAbroad ? fake()->dateTimeBetween(now(), now()->addDays(1)) : null,
         ];
     }
