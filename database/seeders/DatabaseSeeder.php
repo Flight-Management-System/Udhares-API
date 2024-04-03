@@ -29,6 +29,6 @@ class DatabaseSeeder extends Seeder
         $passengers = Passenger::factory(100)->create();
         $groups = Group::factory(5)->recycle($locations)->create();
         Aircraft::factory(10)->recycle($locations)->create();
-        Booking::factory(100)->recycle($groups, $passengers, $locations)->create();
+        Booking::factory(100)->recycle([$groups, $passengers, $locations])->create();
     }
 }
