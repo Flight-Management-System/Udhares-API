@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Aircraft;
 use App\Models\Location;
 use Illuminate\Database\Seeder;
 
@@ -22,6 +23,7 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        Location::factory(10)->create();
+        $locations = Location::factory(10)->create();
+        $aircrafts = Aircraft::factory(10)->recycle($locations)->create();
     }
 }
