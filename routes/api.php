@@ -39,11 +39,13 @@ Route::prefix('/aircrafts')->group(function () {
     Route::get('/{id}', [AircraftController::class, 'show']);
     Route::put('/{id}', [AircraftController::class, 'update']);
     Route::delete('/{id}', [AircraftController::class, 'destroy']);
+    Route::get('/search/{q}', [AircraftController::class, 'search']);
 });
 
 Route::prefix('/passengers')->group(function() {
     Route::get('/', [PassengerController::class, 'index']);
     Route::post('/', [PassengerController::class, 'create']);
+    Route::get('/search', [PassengerController::class, 'search']);
     Route::get('/{id}', [PassengerController::class, 'show']);
     Route::put('/{id}', [PassengerController::class, 'update']);
     Route::delete('/{id}', [PassengerController::class, 'destroy']);

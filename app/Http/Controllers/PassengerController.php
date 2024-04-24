@@ -70,4 +70,21 @@ class PassengerController extends Controller
     {
         return Passenger::destroy($id);
     }
+
+    public function search()
+    {
+        $query = request('q');
+
+        return Passenger::query()
+            ->where('first_name', 'like', "%$query%")
+            ->orWhere('last_name', 'like', "%$query%")
+            ->orWhere('passport_no', 'like', "%$query%")
+            ->orderByRaw("CASE
+                WHEN passport_no LIKE '$query%' THEN 1
+                WHEN first_name LIKE '$query%' THEN 2
+                WHEN last_name LIKE '$query%' THEN 3
+                ELSE 4
+            END")
+            ->get();
+    }
 }
