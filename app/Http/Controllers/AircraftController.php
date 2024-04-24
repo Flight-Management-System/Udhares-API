@@ -82,4 +82,11 @@ class AircraftController extends Controller
     {
         return Aircraft::destroy($id);
     }
+
+    public function search()
+    {
+        $query = request('q');
+
+        return Aircraft::query()->where('reg_no', 'like', "%$query%")->get();
+    }
 }
