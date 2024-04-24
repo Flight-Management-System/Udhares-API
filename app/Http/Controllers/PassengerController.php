@@ -35,6 +35,12 @@ class PassengerController extends Controller
         if ($passenger) {
             return $passenger;
         } else {
+
+            $passenger = Passenger::query()->where('passport_no', $id)->first();
+            if ($passenger) {
+                return $passenger;
+            }
+
             return response()->json(['message' => 'Passenger not found'], 404);
         }
     }
