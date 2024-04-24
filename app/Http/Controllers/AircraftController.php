@@ -44,6 +44,12 @@ class AircraftController extends Controller
         if ($aircraft) {
             return $aircraft;
         } else {
+
+            $aircraft = Aircraft::query()->where('reg_no', $id)->first();
+            if ($aircraft) {
+                return $aircraft;
+            }
+
             return response()->json(['message' => 'Aircraft not found'], 404);
         }
     }
