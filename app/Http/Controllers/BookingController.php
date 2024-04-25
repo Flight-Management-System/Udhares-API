@@ -67,7 +67,7 @@ class BookingController extends Controller
             'is_active' => 'required|boolean',
             'is_going_abroad' => 'required|boolean',
             'is_coming_from_abroad' => 'required|boolean',
-            'international_flight_no' => 'required|string',
+            'international_flight_no' => 'nullable|string',
             'scheduled_dept_datetime' => 'nullable|date',
             'scheduled_arr_datetime' => 'nullable|date',
         ]);
