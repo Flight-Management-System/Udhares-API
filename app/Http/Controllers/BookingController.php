@@ -17,6 +17,7 @@ class BookingController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'passenger' => 'required|exists:passengers,id',
+            'booking_date' => 'required|date',
             'pnr' => 'required|string|unique:bookings',
             'flight' => 'nullable|exists:flights,id',
             'flight_trip' => 'nullable|exists:flight_trips,id',
@@ -57,6 +58,7 @@ class BookingController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'passenger' => 'required|exists:passengers,id',
+            'booking_date' => 'required|date',
             'pnr' => 'required|string',
             'flight' => 'nullable|exists:flights,id',
             'flight_trip' => 'nullable|exists:flight_trips,id',
