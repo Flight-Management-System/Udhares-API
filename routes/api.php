@@ -7,8 +7,11 @@ use App\Http\Controllers\FlightTripController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PassengerController;
+use App\Models\Aircraft;
+use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Validator;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,4 +84,52 @@ Route::prefix('/flights')->group(function() {
     Route::get('/{id}', [FlightController::class, 'show']);
     Route::put('/{id}', [FlightController::class, 'update']);
     Route::delete('/{id}', [FlightController::class, 'destroy']);
+});
+
+Route::get('calculate-time', function() {
+    $validator = Validator::make(request()->all(), [
+        'from' => 'required|exists:locations,id',
+        'to' => 'required|exists:locations,id',
+        'aircraft' => 'required|exists:aircrafts,id',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['message' => $validator->errors()], 400);
+    }
+
+    $from = Location::find(request('from'));
+    $to = Location::find(request('to'));
+    $aircraft = Aircraft::find(request('aircraft'));
+
+    $lat1 = deg2rad($from->lat);
+    $lon1 = deg2rad($from->long);
+    $lat2 = deg2rad($to->lat);
+    $lon2 = deg2rad($to->long);
+
+    $deltaLat = $lat2 - $lat1;
+    $deltaLon = $lon2 - $lon1;
+
+    $a = sin($deltaLat / 2) * sin($deltaLat / 2) +
+        cos($lat1) * cos($lat2) *
+        sin($deltaLon / 2) * sin($deltaLon / 2);
+    $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+    // Radius of earth in Nautical Miles
+    $radius = 3440;
+
+    $distance = $radius * $c;
+
+    $ktas = $aircraft->ktas;
+
+    $time = $distance / $ktas;
+
+    $hours = floor($time);
+    $minutes = floor(($time - $hours) * 60);
+    $seconds = round((($time - $hours) * 60 - $minutes) * 60);
+
+    $time = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+
+    return response()->json([
+        'time' => $time,
+    ]);
 });
