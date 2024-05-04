@@ -17,7 +17,6 @@ class FlightController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'flight_trip' => 'required|integer|exists:flight_trips,id',
-            'flight_no' => 'required|string|unique:flights',
             'dept_time' => 'required|date',
             'arr_time' => 'required|date',
             'dept_location' => 'required|integer|exists:locations,id',
@@ -33,6 +32,7 @@ class FlightController extends Controller
             return response()->json(['message' => 'Departure and arrival locations cannot be the same'], 400);
         }
 
+        $request['flight_no'] = 'FL-' . date('YmdHis');
         $request['dept_time'] = date('Y-m-d H:i:s', strtotime($request->dept_time));
         $request['arr_time'] = date('Y-m-d H:i:s', strtotime($request->arr_time));
 
